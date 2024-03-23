@@ -1,8 +1,8 @@
-from card import Card
+from card import Entity
 
-class AlexDestroyerOfPints(Card):
+class AlexDestroyerOfPints(Entity):
     def __init__(self):
-        super().__init__("Alex, Destroyer Of Pints", 1, 1800, 700, "Entity", "images/AlexDestroyerOfPints1.png", "images/AlexDestroyerOfPints2.png")
+        super().__init__("Alex, Destroyer of Pints", "Entity", "images/AlexDestroyerOfPints1.png", "images/AlexDestroyerOfPints2.png",1,1800,700)
 
     def effect(self):
         self.attack += 200

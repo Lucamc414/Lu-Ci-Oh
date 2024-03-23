@@ -1,6 +1,6 @@
-from card import Card
+from card import Entity
 
-class TavernDweller(Card):
+class TavernDweller(Entity):
     def __init__(self):
-        super().__init__("Tavern Dweller", 1, 1000, 500, "Entity", "images/TavernDweller1.png", "images/TavernDweller2.png")
+        super().__init__("Tavern Dweller","Entity", "images/TavernDweller1.png", "images/TavernDweller2.png",1,1000,500)
 
