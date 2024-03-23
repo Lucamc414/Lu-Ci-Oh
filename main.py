@@ -8,7 +8,7 @@ import game
 pygame.init()
 
 # Set up some constants
-WINDOW_WIDTH = 800
+WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 600
 
 # Set up the display
@@ -44,11 +44,14 @@ if choice == "start_game":
        # Clear the previous frame
         window.fill((0, 0, 0))  # Fill with black color
 
+        # Reload the field
+        game.reloadField(player1, card_width, card_height, window)
+
         # Redraw the smaller cards
         game.showHand(window, player1.hand, start_x, start_y, card_width, card_height, margin)
 
         # Handle card hover
-        hovering = game.handle_card_hover(window, player1.hand, start_x, start_y, card_width, card_height, margin)
+        hovering = game.handle_card_hover(window, player1, start_x, start_y, card_width, card_height, margin)
 
         pygame.display.flip()  # Update the display
                 

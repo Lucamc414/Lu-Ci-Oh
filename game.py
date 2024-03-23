@@ -5,7 +5,7 @@ from player import Player
 import random
 
 # Set up some constants
-WINDOW_WIDTH = 800
+WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 600
 
 def start_game():
@@ -51,7 +51,9 @@ def showHand(window, hand, start_x, start_y, card_width, card_height, margin):
 
 
 
-def handle_card_hover(window, hand, start_x, start_y, card_width, card_height, margin):
+def handle_card_hover(window, player, start_x, start_y, card_width, card_height, margin):
+    # Get the player's hand
+    hand = player.hand
     # Get the current mouse position
     mouse_pos = pygame.mouse.get_pos()
 
@@ -71,7 +73,7 @@ def handle_card_hover(window, hand, start_x, start_y, card_width, card_height, m
             scaled_image = pygame.transform.scale(image, (card_width * 2, card_height * 2))  # Double size
 
             # Calculate the position of the enlarged card
-            x = (WINDOW_WIDTH - card_width * 2) // 2  # Center of the screen
+            x = WINDOW_WIDTH - card_width * 2 - 10  # Near the right edge of the screen, 10 pixels margin
             y = (WINDOW_HEIGHT - card_height * 2) // 2
 
             # Draw the enlarged card on the screen
@@ -79,22 +81,100 @@ def handle_card_hover(window, hand, start_x, start_y, card_width, card_height, m
 
             if mouse_pressed:
                 # Remove the card from the hand
-                del hand[i]
+                if(summon(card, player, card_width, card_height, window)):
+                    del hand[i]
 
-                # Redraw the hand
-                showHand(window, hand, start_x, start_y, card_width, card_height, margin)
+                    # Redraw the hand
+                    showHand(window, hand, start_x, start_y, card_width, card_height, margin)
 
-                # Load the card image
-                image = pygame.image.load(card.image1)
-                scaled_image = pygame.transform.scale(image, (card_width * 2, card_height * 2))  # Double size
+                    # Load the card image
+                    image = pygame.image.load(card.image1)
+                    scaled_image = pygame.transform.scale(image, (card_width * 2, card_height * 2))  # Double size
 
-                # Calculate the position of the enlarged card
-                x = (WINDOW_WIDTH - card_width * 2) // 2  # Center of the screen
-                y = (WINDOW_HEIGHT - card_height * 2) // 2
+                    # Calculate the position of the enlarged card
+                    x = WINDOW_WIDTH - card_width * 2 - 10  # Near the right edge of the screen, 10 pixels margin
+                    y = (WINDOW_HEIGHT - card_height * 2) // 2
 
-                # Draw the summoned card on the screen
-                window.blit(scaled_image, (x, y))
+                    # Draw the summoned card on the screen
+                    window.blit(scaled_image, (x, y))
+
+            return True  # Return True if a card is being hovered over
+    
+    #do the same for the monster zone and spell zone but with no click functionality
+    for i, card in enumerate(player.gameArea.mainMonsterZone):
+        # Calculate the position and size of the card
+        x = player.gameArea.monsterx + i * (card_width + 10)
+        y = player.gameArea.monstery
+        rect = pygame.Rect(x, y, card_width, card_height)
+
+        if rect.collidepoint(mouse_pos):
+            # Load the card image
+            image = pygame.image.load(card.image2)
+            scaled_image = pygame.transform.scale(image, (card_width * 2, card_height * 2))
+            # Calculate the position of the enlarged card
+            x = WINDOW_WIDTH - card_width * 2 - 10  # Near the right edge of the screen, 10 pixels margin
+            y = (WINDOW_HEIGHT - card_height * 2) // 2
+
+            # Draw the enlarged card on the screen
+            window.blit(scaled_image, (x, y))
+
+            return True  # Return True if a card is being hovered over
+    
+    for i, card in enumerate(player.gameArea.spellTrapZone):
+        # Calculate the position and size of the card
+        x = player.gameArea.spellx + i * (card_width + 10)
+        y = player.gameArea.spelly
+        rect = pygame.Rect(x, y, card_width, card_height)
+
+        if rect.collidepoint(mouse_pos):
+            # Load the card image
+            image = pygame.image.load(card.image2)
+            scaled_image = pygame.transform.scale(image, (card_width * 2, card_height * 2))
+            # Calculate the position of the enlarged card
+            x = WINDOW_WIDTH - card_width * 2 - 10  # Near the right edge of the screen, 10 pixels margin
+            y = (WINDOW_HEIGHT - card_height * 2) // 2
+
+            # Draw the enlarged card on the screen
+            window.blit(scaled_image, (x, y))
 
             return True  # Return True if a card is being hovered over
 
     return False  # Return False if no card is being hovered over
+
+def summon(card, player, card_width, card_height, window):
+    success = False
+    if card.type == "Entity":
+        if len(player.gameArea.mainMonsterZone) < 5:
+            player.gameArea.mainMonsterZone.append(card)
+            success = True
+    elif card.type == "Magic" or card.type == "Trap":
+        if len(player.gameArea.spellTrapZone) < 5:
+            player.gameArea.spellTrapZone.append(card)
+            success = True
+    reloadField(player, card_width, card_height, window)
+    pygame.display.update()
+    return success
+
+def reloadField(player, card_width, card_height, window):
+    for i, card in enumerate(player.gameArea.mainMonsterZone):
+        # Load the card image
+        image = pygame.image.load(card.image1)
+        scaled_image = pygame.transform.scale(image, (card_width, card_height))
+
+        # Calculate the position of the card
+        x = player.gameArea.monsterx + i * (card_width + 10)
+        y = player.gameArea.monstery
+
+        # Draw the card on the screen
+        window.blit(scaled_image, (x, y))
+    for i, card in enumerate(player.gameArea.spellTrapZone):
+        # Load the card image
+        image = pygame.image.load(card.image1)
+        scaled_image = pygame.transform.scale(image, (card_width, card_height))
+
+        # Calculate the position of the card
+        x = player.gameArea.spellx + i * (card_width + 10)
+        y = player.gameArea.spelly
+
+        # Draw the card on the screen
+        window.blit(scaled_image, (x, y))
