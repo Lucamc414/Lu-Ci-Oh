@@ -6,6 +6,6 @@ class PlayerGameArea:
         self.graveyard = []
         self.fieldZone = None
         self.monsterx = 120
-        self.monstery = 280
+        self.monstery = 410
         self.spellx = 120
-        self.spelly = 140
+        self.spelly = 205
